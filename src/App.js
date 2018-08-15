@@ -6,6 +6,8 @@ import logo from './logo.svg';
 import './App.css';
 import { getInitData, getTopGainers, getTopLosers, calcDataFluctuation } from './DataProvider';
 
+import * as Services from './services';
+
 import StockTable from './components/Table';
 
 const theme = createMuiTheme({
@@ -44,34 +46,44 @@ const styles = theme => ({
 class App extends Component {
   constructor(props) {
     super(props);
-    const data = getInitData();
-    const topGainers = getTopGainers(data);
-    const topLosers = getTopLosers(data);
-    console.log('top gainers: ', topGainers);
-    console.log('top losers: ', topLosers);
+    // const data = getInitData();
     this.state = {
       value: 0,
-      initData: data,
-      data,
-      topGainers,
-      topLosers
+      initData: [],
+      data: [],
+      topGainers: [],
+      topLosers: []
     };
   }
 
   componentDidMount() {
-    this.intervalId = setInterval(() => {
-      const newData = calcDataFluctuation(this.state.initData, this.state.data);
-      const topGainers = getTopGainers(newData);
-      const topLosers = getTopLosers(newData);
-      this.setState({
-        data: newData,
-        topGainers,
-        topLosers
-      });
-      console.log('New data: ', newData);
-      console.log('top gainers: ', topGainers);
-      console.log('top losers: ', topLosers);
-    }, 5 * 1000);
+    Services.requestData()
+      .then(data => {
+        const topGainers = getTopGainers(data);
+        const topLosers = getTopLosers(data);
+
+        this.setState(
+          {
+            initData: data,
+            data,
+            topGainers,
+            topLosers
+          },
+          () => {
+            this.intervalId = setInterval(() => {
+              const newData = calcDataFluctuation(this.state.initData, this.state.data);
+              const topGainers = getTopGainers(newData);
+              const topLosers = getTopLosers(newData);
+              this.setState({
+                data: newData,
+                topGainers,
+                topLosers
+              });
+            }, 5 * 1000);
+          }
+        );
+      })
+      .catch(err => {});
   }
 
   componentWillUnmount() {

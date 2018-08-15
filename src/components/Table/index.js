@@ -20,7 +20,25 @@ const styles = theme => ({
   },
   textDecrease: {
     color: 'red'
-  }
+  },
+  col1: {
+    width: '10%'
+  },
+  col2: {
+    width: '30%'
+  },
+  col3: {
+    width: '15%'
+  },
+  col4: {
+    width: '25%'
+  },
+  col5: {
+    width: '10%'
+  },
+  col6: {
+    width: '10%'
+  },
 });
 
 class StockTable extends Component {
@@ -29,29 +47,30 @@ class StockTable extends Component {
   }
 
   render() {
-    const { classes, data } = this.props;    
+    const { classes, data } = this.props;
     return (
       <Paper className={classes.root}>
-        <Table className={classes.table}>
+        <Table className={classes.table} fixedHeader={false}>
           <TableHead>
             <TableRow>
-              <TableCell>Code</TableCell>
-              <TableCell>Company</TableCell>
-              <TableCell numeric>Price</TableCell>
-              <TableCell numeric>Value</TableCell>
-              <TableCell numeric>Change</TableCell>
-              <TableCell numeric>%Change</TableCell>
+              <TableCell className={classes.col1}>Code</TableCell>
+              <TableCell className={classes.col2}>Company</TableCell>
+              <TableCell className={classes.col3} numeric>Price</TableCell>
+              <TableCell className={classes.col4} numeric>Value</TableCell>
+              <TableCell className={classes.col5} numeric>Change</TableCell>
+              <TableCell className={classes.col6} numeric>%Change</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data.map(item => {
-              const changeTextClass = item.change !== 0 ? (item.change > 0 ? classes.textIncrease : classes.textDecrease) : '';
+              const changeTextClass =
+                item.change !== 0 ? (item.change > 0 ? classes.textIncrease : classes.textDecrease) : '';
               return (
                 <TableRow key={item.id}>
-                  <TableCell component="th" scope="row">
+                  <TableCell style={{ color: 'blue' }} component="th" scope="row">
                     {item.company.code}
                   </TableCell>
-                  <TableCell>{item.company.name}</TableCell>
+                  <TableCell style={{ color: 'gray' }}>{item.company.name}</TableCell>
                   <TableCell numeric>{item.price.toFixed(2)}</TableCell>
                   <TableCell numeric>{numeral(item.value).format('0,0')}</TableCell>
                   <TableCell className={changeTextClass} numeric>
