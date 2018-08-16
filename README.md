@@ -15,7 +15,7 @@
   - Type “y” and press enter.
   - Type “n” and press enter.
 
-- [More Infomation about deploying to firebase] (https://medium.com/@bensigo/hosting-your-react-app-with-firebase-hosting-add1fa08c214)
+- [More Infomation about deploying to firebase](https://medium.com/@bensigo/hosting-your-react-app-with-firebase-hosting-add1fa08c214)
 
 ## Deploying
 - yarn build
