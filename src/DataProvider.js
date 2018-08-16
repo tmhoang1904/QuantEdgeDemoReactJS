@@ -2,73 +2,55 @@ import _ from 'lodash';
 
 const PAGE_LENGTH = 20;
 
-// const COMPANIES = [
-//   { name: 'Quant Edge', code: 'QAE.VN' },
-//   { name: 'FPT Software', code: 'FPT.VN' },
-//   { name: 'NashTech', code: 'NAT.VN' },
-//   { name: 'Google', code: 'GOO.VN' },
-//   { name: 'Facebook', code: 'FAB.VN' },
-//   { name: 'Amazon', code: 'AMA.VN' },
-//   { name: 'Apple', code: 'APL.VN' },
-//   { name: 'Samsung', code: 'SAM.VN' },
-//   { name: 'Oppo', code: 'OPP.VN' }
-// ];
-
-// export function getInitData() {
-//   let n = 40 + Math.random() * 50;
-//   let data = [];
-//   for (let i = 0; i < n; i++) {
-//     const company = getCompany();
-//     const price = getPrice();
-//     const volume = getVolume();
-//     const value = Math.round(price * volume);
-//     const change = 0;
-//     const changePercent = 0;
-//     data.push({ id: i + 1, company, price, volume, value, change, changePercent });
-//   }
-
-//   data = _.sortBy(data, [
-//     item => {
-//       return item.value;
-//     }
-//   ]);
-
-//   return data;
-// }
-
 export function getTopGainers(data) {
-  return data.slice(data.length - PAGE_LENGTH, data.length).reverse();
+  if (data) {
+    if (data.length > PAGE_LENGTH) return data.slice(data.length - PAGE_LENGTH, data.length).reverse();
+    return data.slice().reverse();
+  }
+  return [];
 }
 
 export function getTopLosers(data) {
-  return data.slice(0, PAGE_LENGTH);
+  if (data) {
+    if (data.length > PAGE_LENGTH) return data.slice(0, PAGE_LENGTH);
+    return data.slice();
+  }
+  return [];
 }
 
 export function calcDataFluctuation(initData, currentData) {
   let newData = [];
-  for (let i = 0; i < initData.length; i++) {
-    const data = currentData[i];
-    const { newPrice, isNegative } = getPriceFluctuation(data.price);
-    const newVolume = getVolumeFluctuation(data.volume);
-    const newValue = Math.round(newVolume * newPrice);
-    const change = newPrice - initData[i].price;
-    const changePercent = (change / initData[i].price) * 100;
+  if (
+    initData &&
+    currentData &&
+    Array.isArray(initData) &&
+    Array.isArray(currentData) &&
+    initData.length === currentData.length
+  ) {
+    for (let i = 0; i < initData.length; i++) {
+      const data = currentData[i];
+      const newPrice = getPriceFluctuation(data.price);
+      const newVolume = getVolumeFluctuation(data.volume);
+      const newValue = Math.round(newVolume * newPrice);
+      const change = newPrice - initData[i].price;
+      const changePercent = (change / initData[i].price) * 100;
 
-    newData.push({
-      ...data,
-      price: newPrice,
-      volume: newVolume,
-      value: newValue,
-      change,
-      changePercent
-    });
-  }
-
-  newData = _.sortBy(newData, [
-    item => {
-      return item.value;
+      newData.push({
+        ...data,
+        price: newPrice,
+        volume: newVolume,
+        value: newValue,
+        change,
+        changePercent
+      });
     }
-  ]);
+
+    newData = _.sortBy(newData, [
+      item => {
+        return item.value;
+      }
+    ]);
+  }
 
   return newData;
 }
@@ -77,32 +59,19 @@ export function calcDataFluctuation(initData, currentData) {
  * Returns a random number between min (inclusive) and max (exclusive)
  */
 function getRandomArbitrary(min, max) {
-  return Math.random() * (max - min) + min;
+  return Math.round((Math.random() * (max - min) + min) * 100) / 100;
 }
 
 function getRandomInteger(min, max) {
   return Math.round(getRandomArbitrary(min, max));
 }
 
-// function getVolume() {
-//   return getRandomInteger(1000, 1000001);
-// }
-
-// function getCompany() {
-//   const index = getRandomInteger(0, COMPANIES.length - 1);
-//   return COMPANIES[index];
-// }
-
-// function getPrice() {
-//   return Math.round(Math.random() * 100 * 100) / 100;
-// }
-
 function getPriceFluctuation(currentPrice) {
   let changeValue = getRandomArbitrary(0, 6);
   const isNegative = getRandomInteger(0, 2) === 0;
   changeValue = isNegative ? changeValue * -1 : changeValue;
   const newPrice = Math.round((currentPrice + (currentPrice * changeValue) / 100) * 100) / 100;
-  return { newPrice, isNegative };
+  return newPrice;
 }
 
 function getVolumeFluctuation(currentVolume) {

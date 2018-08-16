@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { Button, Tabs, AppBar, Tab, Typography, Toolbar, Grid } from '@material-ui/core';
+import { Tabs, AppBar, Tab, Typography, Toolbar, Grid, CircularProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-import logo from './logo.svg';
 import './App.css';
-import { getInitData, getTopGainers, getTopLosers, calcDataFluctuation } from './DataProvider';
+import { getTopGainers, getTopLosers, calcDataFluctuation } from './DataProvider';
 
 import * as Services from './services';
 
@@ -38,6 +37,13 @@ const styles = theme => ({
   },
   toolbarText: {
     color: 'white'
+  },
+  progress: {
+    margin: theme.spacing.unit * 2
+  },
+  progressContainer: {
+    width: '100%',
+    textAlign: 'center'
   }
 });
 
@@ -52,7 +58,8 @@ class App extends Component {
       initData: [],
       data: [],
       topGainers: [],
-      topLosers: []
+      topLosers: [],
+      loading: true
     };
   }
 
@@ -67,7 +74,8 @@ class App extends Component {
             initData: data,
             data,
             topGainers,
-            topLosers
+            topLosers,
+            loading: false
           },
           () => {
             this.intervalId = setInterval(() => {
@@ -98,7 +106,7 @@ class App extends Component {
 
   render() {
     const { classes } = this.props;
-    const { value, data, topGainers, topLosers } = this.state;
+    const { value, topGainers, topLosers, loading } = this.state;
 
     return (
       <MuiThemeProvider theme={theme}>
@@ -122,6 +130,11 @@ class App extends Component {
           </AppBar>
           {value === 0 && <StockTable data={topGainers} />}
           {value === 1 && <StockTable data={topLosers} />}
+          {loading && (
+            <div className={classes.progressContainer}>
+              <CircularProgress className={classes.progress} size={50} />
+            </div>
+          )}
         </div>
       </MuiThemeProvider>
     );

@@ -4,61 +4,30 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import numeral from 'numeral';
 
-const styles = theme => ({
-  root: {
-    width: '100%',
-    overflowX: 'auto'
-  },
-  table: {
-    minWidth: 700
-  },
-  textRight: {
-    textAlign: 'right'
-  },
-  textIncrease: {
-    color: 'green'
-  },
-  textDecrease: {
-    color: 'red'
-  },
-  col1: {
-    width: '10%'
-  },
-  col2: {
-    width: '30%'
-  },
-  col3: {
-    width: '15%'
-  },
-  col4: {
-    width: '25%'
-  },
-  col5: {
-    width: '10%'
-  },
-  col6: {
-    width: '10%'
-  },
-});
+import styles from './styles';
 
 class StockTable extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { classes, data } = this.props;
     return (
       <Paper className={classes.root}>
-        <Table className={classes.table} fixedHeader={false}>
+        <Table className={classes.table}>
           <TableHead>
             <TableRow>
               <TableCell className={classes.col1}>Code</TableCell>
               <TableCell className={classes.col2}>Company</TableCell>
-              <TableCell className={classes.col3} numeric>Price</TableCell>
-              <TableCell className={classes.col4} numeric>Value</TableCell>
-              <TableCell className={classes.col5} numeric>Change</TableCell>
-              <TableCell className={classes.col6} numeric>%Change</TableCell>
+              <TableCell className={classes.col3} numeric>
+                Price
+              </TableCell>
+              <TableCell className={classes.col4} numeric>
+                Value
+              </TableCell>
+              <TableCell className={classes.col5} numeric>
+                Change
+              </TableCell>
+              <TableCell className={classes.col6} numeric>
+                %Change
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -68,16 +37,28 @@ class StockTable extends Component {
               return (
                 <TableRow key={item.id}>
                   <TableCell style={{ color: 'blue' }} component="th" scope="row">
-                    {item.company.code}
+                    {item.company && item.company.code ? item.company.code : ''}
                   </TableCell>
-                  <TableCell style={{ color: 'gray' }}>{item.company.name}</TableCell>
-                  <TableCell numeric>{item.price.toFixed(2)}</TableCell>
-                  <TableCell numeric>{numeral(item.value).format('0,0')}</TableCell>
-                  <TableCell className={changeTextClass} numeric>
-                    {item.change.toFixed(2)}
+                  <TableCell style={{ color: 'gray' }}>
+                    {item.company && item.company.name ? item.company.name.toUpperCase() : ''}
                   </TableCell>
-                  <TableCell className={changeTextClass + ' ' + classes.textRight}>
-                    {item.changePercent.toFixed(2).toString() + '%'}
+                  <TableCell className={classes.numberic} numeric>
+                    {item.price ? item.price.toFixed(2) : ''}
+                  </TableCell>
+                  <TableCell className={classes.numberic} numeric>
+                    {item.value ? numeral(item.value).format('0,0') : ''}
+                  </TableCell>
+                  <TableCell
+                    className={classes.numberic}
+                    className={[changeTextClass, classes.numberic].join(' ')}
+                    numeric
+                  >
+                    {typeof item.change !== 'undefined' && item.change !== 0 ? item.change.toFixed(2) : '--'}
+                  </TableCell>
+                  <TableCell className={[changeTextClass, classes.textRight, classes.numberic].join(' ')}>
+                    {typeof item.changePercent !== 'undefined' && item.changePercent !== 0
+                      ? item.changePercent.toFixed(2).toString() + '%'
+                      : '--'}
                   </TableCell>
                 </TableRow>
               );

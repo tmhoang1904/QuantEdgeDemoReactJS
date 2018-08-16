@@ -9,7 +9,7 @@ export function requestData() {
     fetch(GET_DATA_URL, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
       .then(resp => resp.json())
       .then(result => {
-        console.log('Resp: ', result);
+        // console.log('Resp: ', result);
         if (result && result.data) {
           resolve(result.data);
         } else {
